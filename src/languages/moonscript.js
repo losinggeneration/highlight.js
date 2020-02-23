@@ -8,6 +8,12 @@ Category: scripting
 */
 
 export default function(hljs) {
+  var OPENING_LONG_BRACKET = '\\[=*\\[';
+  var CLOSING_LONG_BRACKET = '\\]=*\\]';
+  var LONG_BRACKETS = {
+    begin: OPENING_LONG_BRACKET, end: CLOSING_LONG_BRACKET,
+    contains: ['self']
+  };
   var KEYWORDS = {
     keyword:
       // Moonscript keywords
@@ -41,18 +47,13 @@ export default function(hljs) {
   var EXPRESSIONS = [
     hljs.inherit(hljs.C_NUMBER_MODE,
       {starts: {end: '(\\s*/)?', relevance: 0}}), // a number tries to eat the following slash to prevent treating it as a regexp
+    hljs.APOS_STRING_MODE,
+    hljs.QUOTE_STRING_MODE,
     {
       className: 'string',
-      variants: [
-        {
-          begin: /'/, end: /'/,
-          contains: [hljs.BACKSLASH_ESCAPE]
-        },
-        {
-          begin: /"/, end: /"/,
-          contains: [hljs.BACKSLASH_ESCAPE, SUBST]
-        }
-      ]
+      begin: OPENING_LONG_BRACKET, end: CLOSING_LONG_BRACKET,
+      contains: [LONG_BRACKETS],
+      relevance: 5
     },
     {
       className: 'built_in',
